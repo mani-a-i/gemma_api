@@ -62,6 +62,7 @@ starting the blender. \
 Tough luck! See ya!
 """.strip()
 
+translate_customer_message(template_string,customer_style=style,customer_email=feedback)
 
 json_template = """\
 For the following text, extract the following information:
@@ -96,7 +97,6 @@ out there, but I think it's worth it for the extra features.
 """
 
 
-translate_customer_message(template_string,customer_style=style,customer_email=feedback)
 json_output(template_string=json_template,customer_review=customer_review)
 
 
