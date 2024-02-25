@@ -26,29 +26,78 @@ def output(prompt):
     
     return query({
         "inputs":text,
-        "parameters":{"top_k":2,
+        "parameters":{"top_k":3,
                      "top_p":0.9,
-                     "temperature":0.5,
+                     "temperature":0.9,
                      "max_length":500}  
         
-    })[0]['generated_text'][len(text):].strip()
+                })[0]['generated_text'][len(text):].strip()
 
 def translate_customer_message(template_string,customer_style,customer_email):
     chat_pt = ChatPromptTemplate.from_template(template_string)
     customer_message = chat_pt.format_messages(style=customer_style,text=customer_email)[0].content
     print(output(customer_message))
 
-    
+
+def json_output(template_string,customer_review):
+    prompt = ChatPromptTemplate.from_template(template_string).format_messages(text=customer_review)[0].content 
+    print(output(prompt))      
+
+
 template_string = """Translate the text that is delimited by triple backticks into a style that is {style}.\n 
 text: ```{text}```
 """
-customer_style = """American English 
-in a calm and respectful tone
+style = """\
+a polite tone \
+that speaks in English Pirate\
 """.strip()
 
-customer_email = """Arrr, I be fuming that me blender lid flew off and splattered me kitchen walls with smoothie! And to make matters worse, the warranty don't cover the cost of cleaning up me kitchen. I need yer help right now, matey!""".strip()
+feedback =  """Hey there customer, \
+the warranty does not cover \
+cleaning expenses for your kitchen \
+because it's your fault that \
+you misused your blender \
+by forgetting to put the lid on before \
+starting the blender. \
+Tough luck! See ya!
+""".strip()
 
 
-translate_customer_message(template_string,customer_style,customer_email)
+json_template = """\
+For the following text, extract the following information:
+
+gift: Was the item purchased as a gift for someone else? \
+Answer True if yes, False if not or unknown.
+
+delivery_days: How many days did it take for the product \
+to arrive? If this information is not found, output -1.
+
+price_value: Extract any sentences about the value or price,\
+and output them as a comma separated Python list.
+
+Format the output as JSON with the following keys:
+gift
+delivery_days
+price_value
+
+text: {text}
+"""
+
+customer_review = """\
+This leaf blower is pretty amazing.  It has four settings:\
+candle blower, gentle breeze, windy city, and tornado. \
+It arrived in two days, just in time for my wife's \
+anniversary present. \
+I think my wife liked it so much she was speechless. \
+So far I've been the only one using it, and I've been \
+using it every other morning to clear the leaves on our lawn. \
+It's slightly more expensive than the other leaf blowers \
+out there, but I think it's worth it for the extra features.
+"""
+
+
+translate_customer_message(template_string,customer_style=style,customer_email=feedback)
+json_output(template_string=json_template,customer_review=customer_review)
+
 
 
